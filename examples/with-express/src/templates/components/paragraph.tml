@@ -1,0 +1,8 @@
+<link rel="import" href="./redirect.tml" />
+<script>
+  console.log('paragraph', className);
+</script>
+<p>
+  {children}
+  <redirect class=className href="/">Link</next>
+</p>

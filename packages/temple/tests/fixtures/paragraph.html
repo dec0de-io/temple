@@ -1,0 +1,17 @@
+<link rel="import" href="./next.html" />
+<script>
+  import { reactive } from 'anywhere';
+  export default slots => {
+    const { children, className } = slots;
+    const popup = e => {
+      e.preventDefault();
+      alert('clicked');
+      return false;
+    };
+    return { children, className, popup };
+  };
+</script>
+<p click=${popup}>
+  ${children}
+  <next className="${className}" href="/">Link</next>
+</p>

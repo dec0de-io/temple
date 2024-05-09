@@ -1,0 +1,28 @@
+{
+  "name": "temple",
+  "version": "0.0.1",
+  "description": "Simple Reactive Template Engine",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "ts-mocha tests/*.test.ts"
+  },
+  "dependencies": {
+    "parse5": "7.1.2",
+    "uglify-js": "3.17.4"
+  },
+  "devDependencies": {
+    "@types/chai": "4.3.5",
+    "@types/expect": "24.3.0",
+    "@types/mocha": "10.0.1",
+    "@types/node": "20.12.7",
+    "@types/uglify-js": "3.17.5",
+    "chai": "4.3.7",
+    "mocha": "10.2.0",
+    "ts-jest": "29.0.5",
+    "ts-mocha": "10.0.0",
+    "ts-node": "10.9.2",
+    "typescript": "5.4.4"
+  }
+}

@@ -1,0 +1,1192 @@
+[
+  {
+    "type": "<>",
+    "start": 0,
+    "end": 8,
+    "value": "<script>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 1,
+        "end": 7,
+        "value": "script"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 8,
+    "end": 18,
+    "value": "\n  import "
+  },
+  {
+    "type": "{}",
+    "start": 18,
+    "end": 28,
+    "value": "{ signal }",
+    "children": [
+      {
+        "type": "#text",
+        "start": 19,
+        "end": 27,
+        "value": " signal "
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 28,
+    "end": 34,
+    "value": " from "
+  },
+  {
+    "type": "''",
+    "start": 34,
+    "end": 42,
+    "value": "'temple'",
+    "children": [
+      {
+        "type": "#text",
+        "start": 35,
+        "end": 41,
+        "value": "temple"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 42,
+    "end": 67,
+    "value": ";\n  \n  let count = signal"
+  },
+  {
+    "type": "<>",
+    "start": 67,
+    "end": 75,
+    "value": "<number>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 68,
+        "end": 74,
+        "value": "number"
+      }
+    ]
+  },
+  {
+    "type": "()",
+    "start": 75,
+    "end": 82,
+    "value": "(value)",
+    "children": [
+      {
+        "type": "#text",
+        "start": 76,
+        "end": 81,
+        "value": "value"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 82,
+    "end": 97,
+    "value": ";\n  const up = "
+  },
+  {
+    "type": "()",
+    "start": 97,
+    "end": 99,
+    "value": "()",
+    "children": [
+      {
+        "type": "#text",
+        "start": 98,
+        "end": 98,
+        "value": ""
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 99,
+    "end": 127,
+    "value": " => count++;\n  const down = "
+  },
+  {
+    "type": "()",
+    "start": 127,
+    "end": 129,
+    "value": "()",
+    "children": [
+      {
+        "type": "#text",
+        "start": 128,
+        "end": 128,
+        "value": ""
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 129,
+    "end": 163,
+    "value": " => count--;\n\n  let index = signal"
+  },
+  {
+    "type": "<>",
+    "start": 163,
+    "end": 171,
+    "value": "<number>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 164,
+        "end": 170,
+        "value": "number"
+      }
+    ]
+  },
+  {
+    "type": "()",
+    "start": 171,
+    "end": 174,
+    "value": "(0)",
+    "children": [
+      {
+        "type": "#text",
+        "start": 172,
+        "end": 173,
+        "value": "0"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 174,
+    "end": 191,
+    "value": ";\n  const list = "
+  },
+  {
+    "type": "[]",
+    "start": 191,
+    "end": 208,
+    "value": "[ 'a', 'b', 'c' ]",
+    "children": [
+      {
+        "type": "#text",
+        "start": 192,
+        "end": 193,
+        "value": " "
+      },
+      {
+        "type": "''",
+        "start": 193,
+        "end": 196,
+        "value": "'a'",
+        "children": [
+          {
+            "type": "#text",
+            "start": 194,
+            "end": 195,
+            "value": "a"
+          }
+        ]
+      },
+      {
+        "type": "#text",
+        "start": 196,
+        "end": 198,
+        "value": ", "
+      },
+      {
+        "type": "''",
+        "start": 198,
+        "end": 201,
+        "value": "'b'",
+        "children": [
+          {
+            "type": "#text",
+            "start": 199,
+            "end": 200,
+            "value": "b"
+          }
+        ]
+      },
+      {
+        "type": "#text",
+        "start": 201,
+        "end": 203,
+        "value": ", "
+      },
+      {
+        "type": "''",
+        "start": 203,
+        "end": 206,
+        "value": "'c'",
+        "children": [
+          {
+            "type": "#text",
+            "start": 204,
+            "end": 205,
+            "value": "c"
+          }
+        ]
+      },
+      {
+        "type": "#text",
+        "start": 206,
+        "end": 207,
+        "value": " "
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 208,
+    "end": 225,
+    "value": ";\n  const hash = "
+  },
+  {
+    "type": "{}",
+    "start": 225,
+    "end": 245,
+    "value": "{ a: 1, b: 2, c: 3 }",
+    "children": [
+      {
+        "type": "#text",
+        "start": 226,
+        "end": 244,
+        "value": " a: 1, b: 2, c: 3 "
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 245,
+    "end": 247,
+    "value": ";\n"
+  },
+  {
+    "type": "<>",
+    "start": 247,
+    "end": 256,
+    "value": "</script>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 248,
+        "end": 255,
+        "value": "/script"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 256,
+    "end": 258,
+    "value": "\n\n"
+  },
+  {
+    "type": "<>",
+    "start": 258,
+    "end": 278,
+    "value": "<div if={count > 0}>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 259,
+        "end": 266,
+        "value": "div if="
+      },
+      {
+        "type": "{}",
+        "start": 266,
+        "end": 277,
+        "value": "{count > 0}",
+        "children": [
+          {
+            "type": "#text",
+            "start": 267,
+            "end": 276,
+            "value": "count > 0"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 278,
+    "end": 279,
+    "value": "+"
+  },
+  {
+    "type": "{}",
+    "start": 279,
+    "end": 286,
+    "value": "{count}",
+    "children": [
+      {
+        "type": "#text",
+        "start": 280,
+        "end": 285,
+        "value": "count"
+      }
+    ]
+  },
+  {
+    "type": "<>",
+    "start": 286,
+    "end": 292,
+    "value": "</div>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 287,
+        "end": 291,
+        "value": "/div"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 292,
+    "end": 293,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 293,
+    "end": 315,
+    "value": "<div elif={count < 0}>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 294,
+        "end": 303,
+        "value": "div elif="
+      },
+      {
+        "type": "{}",
+        "start": 303,
+        "end": 314,
+        "value": "{count < 0}",
+        "children": [
+          {
+            "type": "#text",
+            "start": 304,
+            "end": 313,
+            "value": "count < 0"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "{}",
+    "start": 315,
+    "end": 322,
+    "value": "{count}",
+    "children": [
+      {
+        "type": "#text",
+        "start": 316,
+        "end": 321,
+        "value": "count"
+      }
+    ]
+  },
+  {
+    "type": "<>",
+    "start": 322,
+    "end": 328,
+    "value": "</div>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 323,
+        "end": 327,
+        "value": "/div"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 328,
+    "end": 329,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 329,
+    "end": 339,
+    "value": "<div else>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 330,
+        "end": 338,
+        "value": "div else"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 339,
+    "end": 342,
+    "value": "\n  "
+  },
+  {
+    "type": "<>",
+    "start": 342,
+    "end": 350,
+    "value": "<strong>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 343,
+        "end": 349,
+        "value": "strong"
+      }
+    ]
+  },
+  {
+    "type": "{}",
+    "start": 350,
+    "end": 362,
+    "value": "{`${count}`}",
+    "children": [
+      {
+        "type": "``",
+        "start": 351,
+        "end": 361,
+        "value": "`${count}`",
+        "children": [
+          {
+            "type": "#text",
+            "start": 352,
+            "end": 360,
+            "value": "${count}"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "<>",
+    "start": 362,
+    "end": 371,
+    "value": "</strong>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 363,
+        "end": 370,
+        "value": "/strong"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 371,
+    "end": 372,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 372,
+    "end": 378,
+    "value": "</div>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 373,
+        "end": 377,
+        "value": "/div"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 378,
+    "end": 379,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 379,
+    "end": 398,
+    "value": "<button click=down>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 380,
+        "end": 397,
+        "value": "button click=down"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 398,
+    "end": 405,
+    "value": "&minus;"
+  },
+  {
+    "type": "<>",
+    "start": 405,
+    "end": 414,
+    "value": "</button>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 406,
+        "end": 413,
+        "value": "/button"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 414,
+    "end": 415,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 415,
+    "end": 432,
+    "value": "<button click=up>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 416,
+        "end": 431,
+        "value": "button click=up"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 432,
+    "end": 438,
+    "value": "&plus;"
+  },
+  {
+    "type": "<>",
+    "start": 438,
+    "end": 447,
+    "value": "</button>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 439,
+        "end": 446,
+        "value": "/button"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 447,
+    "end": 449,
+    "value": "\n\n"
+  },
+  {
+    "type": "<>",
+    "start": 449,
+    "end": 455,
+    "value": "<hr />",
+    "children": [
+      {
+        "type": "#text",
+        "start": 450,
+        "end": 454,
+        "value": "hr /"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 455,
+    "end": 457,
+    "value": "\n\n"
+  },
+  {
+    "type": "<>",
+    "start": 457,
+    "end": 480,
+    "value": "<div while={index < 2}>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 458,
+        "end": 468,
+        "value": "div while="
+      },
+      {
+        "type": "{}",
+        "start": 468,
+        "end": 479,
+        "value": "{index < 2}",
+        "children": [
+          {
+            "type": "#text",
+            "start": 469,
+            "end": 478,
+            "value": "index < 2"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 480,
+    "end": 483,
+    "value": "\n  "
+  },
+  {
+    "type": "{}",
+    "start": 483,
+    "end": 492,
+    "value": "{index++}",
+    "children": [
+      {
+        "type": "#text",
+        "start": 484,
+        "end": 491,
+        "value": "index++"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 492,
+    "end": 493,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 493,
+    "end": 499,
+    "value": "</div>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 494,
+        "end": 498,
+        "value": "/div"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 499,
+    "end": 501,
+    "value": "\n\n"
+  },
+  {
+    "type": "<>",
+    "start": 501,
+    "end": 507,
+    "value": "<hr />",
+    "children": [
+      {
+        "type": "#text",
+        "start": 502,
+        "end": 506,
+        "value": "hr /"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 507,
+    "end": 509,
+    "value": "\n\n"
+  },
+  {
+    "type": "<>",
+    "start": 509,
+    "end": 534,
+    "value": "<div each=item from=list>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 510,
+        "end": 533,
+        "value": "div each=item from=list"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 534,
+    "end": 537,
+    "value": "\n  "
+  },
+  {
+    "type": "{}",
+    "start": 537,
+    "end": 543,
+    "value": "{item}",
+    "children": [
+      {
+        "type": "#text",
+        "start": 538,
+        "end": 542,
+        "value": "item"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 543,
+    "end": 544,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 544,
+    "end": 550,
+    "value": "</div>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 545,
+        "end": 549,
+        "value": "/div"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 550,
+    "end": 551,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 551,
+    "end": 581,
+    "value": "<div each=[i, item] from=list>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 552,
+        "end": 561,
+        "value": "div each="
+      },
+      {
+        "type": "[]",
+        "start": 561,
+        "end": 570,
+        "value": "[i, item]",
+        "children": [
+          {
+            "type": "#text",
+            "start": 562,
+            "end": 569,
+            "value": "i, item"
+          }
+        ]
+      },
+      {
+        "type": "#text",
+        "start": 570,
+        "end": 580,
+        "value": " from=list"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 581,
+    "end": 584,
+    "value": "\n  "
+  },
+  {
+    "type": "{}",
+    "start": 584,
+    "end": 590,
+    "value": "{item}",
+    "children": [
+      {
+        "type": "#text",
+        "start": 585,
+        "end": 589,
+        "value": "item"
+      }
+    ]
+  },
+  {
+    "type": "{}",
+    "start": 590,
+    "end": 593,
+    "value": "{i}",
+    "children": [
+      {
+        "type": "#text",
+        "start": 591,
+        "end": 592,
+        "value": "i"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 593,
+    "end": 594,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 594,
+    "end": 600,
+    "value": "</div>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 595,
+        "end": 599,
+        "value": "/div"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 600,
+    "end": 601,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 601,
+    "end": 625,
+    "value": "<div each=[i] from=list>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 602,
+        "end": 611,
+        "value": "div each="
+      },
+      {
+        "type": "[]",
+        "start": 611,
+        "end": 614,
+        "value": "[i]",
+        "children": [
+          {
+            "type": "#text",
+            "start": 612,
+            "end": 613,
+            "value": "i"
+          }
+        ]
+      },
+      {
+        "type": "#text",
+        "start": 614,
+        "end": 624,
+        "value": " from=list"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 625,
+    "end": 628,
+    "value": "\n  "
+  },
+  {
+    "type": "{}",
+    "start": 628,
+    "end": 631,
+    "value": "{i}",
+    "children": [
+      {
+        "type": "#text",
+        "start": 629,
+        "end": 630,
+        "value": "i"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 631,
+    "end": 632,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 632,
+    "end": 638,
+    "value": "</div>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 633,
+        "end": 637,
+        "value": "/div"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 638,
+    "end": 640,
+    "value": "\n\n"
+  },
+  {
+    "type": "<>",
+    "start": 640,
+    "end": 646,
+    "value": "<hr />",
+    "children": [
+      {
+        "type": "#text",
+        "start": 641,
+        "end": 645,
+        "value": "hr /"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 646,
+    "end": 648,
+    "value": "\n\n"
+  },
+  {
+    "type": "<>",
+    "start": 648,
+    "end": 674,
+    "value": "<div each=value from=hash>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 649,
+        "end": 673,
+        "value": "div each=value from=hash"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 674,
+    "end": 677,
+    "value": "\n  "
+  },
+  {
+    "type": "{}",
+    "start": 677,
+    "end": 684,
+    "value": "{value}",
+    "children": [
+      {
+        "type": "#text",
+        "start": 678,
+        "end": 683,
+        "value": "value"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 684,
+    "end": 685,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 685,
+    "end": 691,
+    "value": "</div>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 686,
+        "end": 690,
+        "value": "/div"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 691,
+    "end": 692,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 692,
+    "end": 725,
+    "value": "<div each=[key, value] from=hash>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 693,
+        "end": 702,
+        "value": "div each="
+      },
+      {
+        "type": "[]",
+        "start": 702,
+        "end": 714,
+        "value": "[key, value]",
+        "children": [
+          {
+            "type": "#text",
+            "start": 703,
+            "end": 713,
+            "value": "key, value"
+          }
+        ]
+      },
+      {
+        "type": "#text",
+        "start": 714,
+        "end": 724,
+        "value": " from=hash"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 725,
+    "end": 728,
+    "value": "\n  "
+  },
+  {
+    "type": "{}",
+    "start": 728,
+    "end": 735,
+    "value": "{value}",
+    "children": [
+      {
+        "type": "#text",
+        "start": 729,
+        "end": 734,
+        "value": "value"
+      }
+    ]
+  },
+  {
+    "type": "{}",
+    "start": 735,
+    "end": 740,
+    "value": "{key}",
+    "children": [
+      {
+        "type": "#text",
+        "start": 736,
+        "end": 739,
+        "value": "key"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 740,
+    "end": 741,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 741,
+    "end": 747,
+    "value": "</div>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 742,
+        "end": 746,
+        "value": "/div"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 747,
+    "end": 748,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 748,
+    "end": 774,
+    "value": "<div each=[key] from=hash>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 749,
+        "end": 758,
+        "value": "div each="
+      },
+      {
+        "type": "[]",
+        "start": 758,
+        "end": 763,
+        "value": "[key]",
+        "children": [
+          {
+            "type": "#text",
+            "start": 759,
+            "end": 762,
+            "value": "key"
+          }
+        ]
+      },
+      {
+        "type": "#text",
+        "start": 763,
+        "end": 773,
+        "value": " from=hash"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 774,
+    "end": 777,
+    "value": "\n  "
+  },
+  {
+    "type": "{}",
+    "start": 777,
+    "end": 782,
+    "value": "{key}",
+    "children": [
+      {
+        "type": "#text",
+        "start": 778,
+        "end": 781,
+        "value": "key"
+      }
+    ]
+  },
+  {
+    "type": "#text",
+    "start": 782,
+    "end": 783,
+    "value": "\n"
+  },
+  {
+    "type": "<>",
+    "start": 783,
+    "end": 789,
+    "value": "</div>",
+    "children": [
+      {
+        "type": "#text",
+        "start": 784,
+        "end": 788,
+        "value": "/div"
+      }
+    ]
+  }
+]

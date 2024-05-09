@@ -1,0 +1,12 @@
+<link rel="import" href="./paragraph.html" />
+<style>
+  :host { font-size: 15px; }
+</style>
+<script>
+  import { state, slots } from 'temple';
+  const { start } = slots.get();
+  const current = state(start);
+  const update = () => current.value += 1;
+  slots.add({ current });
+</script>
+<paragraph class="{class}">{current}</p>

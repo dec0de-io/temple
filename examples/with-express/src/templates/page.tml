@@ -1,0 +1,17 @@
+<link rel="import" href="./components/header1.tml" />
+<link rel="import" href="./components/paragraph.tml" />
+<link rel="import" href="./components/counter.tml" />
+<style>
+  .something { color: red; }
+  .else { display: block; background-color: blue; }
+</style>
+<html>
+  <head>
+    <title>Test Title</title>
+  </head>
+  <body>
+    <header1 class="something">{title}</header1>
+    <paragraph className="something more">{description}</paragraph>
+    <counter start=value />
+  </body>
+</html>

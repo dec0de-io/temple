@@ -1,0 +1,39 @@
+{
+  "name": "@dec0de.io/temple-parser",
+  "version": "0.1.5",
+  "license": "MIT",
+  "description": "Parses ideas to AST and readable JSON.",
+  "author": "Chris <chris@incept.asia>",
+  "homepage": "https://github.com/dec0de-io/temple",
+  "bugs": "https://github.com/dec0de-io/temple/issues",
+  "repository": "dec0de-io/temple",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "npm run build:tsc && npm run build:files",
+    "build:tsc": "tsc",
+    "build:files": "cp ./README.md ./dist/ && cp ./package.json ./dist/ && cp ./LICENSE ./dist/",
+    "test": "nyc cross-env DATABASE_URL=test ts-mocha tests/*.test.ts"
+  },
+  "dependencies": {
+    "acorn": "8.11.3",
+    "escodegen": "2.1.0",
+    "typescript": "5.3.3"
+  },
+  "devDependencies": {
+    "@types/chai": "4.3.5",
+    "@types/deep-equal-in-any-order": "1.0.1",
+    "@types/escodegen": "0.0.10",
+    "@types/expect": "24.3.0",
+    "@types/mocha": "10.0.1",
+    "@types/node": "20.11.16",
+    "chai": "4.3.7",
+    "cross-env": "7.0.3",
+    "deep-equal-in-any-order": "",
+    "mocha": "10.2.0",
+    "nyc": "15.1.0",
+    "ts-mocha": "10.0.0",
+    "ts-morph": "22.0.0",
+    "ts-node": "10.9.2"
+  }
+}

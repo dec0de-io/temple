@@ -2,7 +2,7 @@
   import signal from '@dec0de-io/temple/dist/signal';
   import props from '@dec0de-io/temple/dist/props';
   const { start } = props();
-  const count = signal<number>(parseInt(start));
+  const count = signal<number>(start);
   console.log('count', count, count.value)
   setTimeout(() => count.value++, 3000);
 </script>

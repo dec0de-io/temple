@@ -1,3 +1,11 @@
+declare global {
+  interface Window {
+    __SERVER_PROPS__: Record<string, any>;
+  }
+}
+
+const ServerProps = window.__SERVER_PROPS__;
+
 export default abstract class TempleComponent extends HTMLElement {
   //current component
   protected static _current: TempleComponent|null = null;
@@ -60,6 +68,35 @@ export default abstract class TempleComponent extends HTMLElement {
               decoded = null;
             }
             this._properties[name] = decoded;
+          } else if (value.startsWith('data:')) {
+            let decoded = value.substring(5);
+            if (value === 'true') {
+              decoded = true;
+            } else if (value === 'false') {
+              decoded = false;
+            } else if (value === 'null') {
+              decoded = null;
+            }
+            this._properties[name] = decoded;
+          } else if (value.startsWith('prop:')) {
+            const key = value.substring(5);
+            if (typeof ServerProps[key] !== 'undefined') {
+              this._properties[name] = ServerProps[key];
+            }
+          } else if (value.startsWith('script:')) {
+            const program = Object.keys(ServerProps).reduce(
+              (script, key) => script.replace(
+                key, 
+                JSON.stringify(ServerProps[key])
+              ), 
+              value.substring(7)
+            );
+            console.log(program)
+            try {
+              this._properties[name] = new Function(`return ${program}`)();
+            } catch (error) {
+              console.error(error);
+            }
           } else {
             this._properties[name] = value;
           } 

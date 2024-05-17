@@ -61,6 +61,11 @@ export default class TempleDocument {
     const head = [ this._head ];
     if (this._styles) {
       head.push(`<style>${this._styles}</style>`);
+    }
+    if (Object.keys(this._properties).length) {
+      head.push(`<script>window.__SERVER_PROPS__ = ${
+        JSON.stringify(this._properties)
+      }</script>`);
     } 
     if (this._scripts) {
       head.push(`<script>${this._scripts}</script>`);

@@ -348,17 +348,17 @@ export default class DocumentCompiler {
                 return `${property.key.name}="${property.value.value}"`;
               }
               //null, true, false, number will be passed as a blob url
-              return `${property.key.name}="\${${
+              return `${property.key.name}="data:${
                 property.value.value
-              }}"`;
+              }"`;
             } else if (property.value.type === 'Identifier') {
-              return `${property.key.name}="\${${
+              return `${property.key.name}="prop:${
                 property.value.name
-              }}"`;
+              }"`;
             } else if (property.value.type === 'ProgramExpression') {
-              return `${property.key.name}="\${${
+              return `${property.key.name}="script:${
                 property.value.source
-              }}"`;
+              }"`;
             }
 
             return false;

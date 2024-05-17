@@ -1,6 +1,5 @@
 //types
 import type {
-  ComponentToken,
   StyleToken,
   MarkupToken,
   MarkupChildToken
@@ -8,7 +7,8 @@ import type {
 import type { 
   CompilerOptions, 
   CompilerResults, 
-  ComponentRegistry 
+  ComponentRegistry,
+  Manifest
 } from './types';
 //file loaders
 import fs from 'fs';
@@ -31,10 +31,12 @@ import Exception from '../Exception';
  * logic should be handled on the server
  */
 export default class DocumentCompiler {
-  //the page name
-  static readonly PAGE_NAME = 'page.js';
-  //the bundle name
-  static readonly BUNDLE_NAME = 'index.js';
+  //the page file name
+  static readonly PAGE_FILENAME = 'page.js';
+  //the bundle file name
+  static readonly BUNDLE_FILENAME = 'index.js';
+  //the manifest file name
+  static readonly MANIFEST_FILENAME = 'manifest.json';
 
   /**
    * Quick compile pattern
@@ -45,6 +47,7 @@ export default class DocumentCompiler {
       return await compiler.compile(sourceFile);
     }
   }
+
   //file system to use
   protected _fs: typeof fs;
   //current working directory
@@ -54,10 +57,8 @@ export default class DocumentCompiler {
   protected _buildPath: string;
   //prefix brand
   protected _brand: string;
-  //the component compiler
-  protected _componentCompiler: ComponentCompiler;
-  //the compiled components cache
-  protected _compiledComponents: ComponentRegistry = {};
+  //use cache files
+  protected _useCache: boolean;
 
   /**
    * Returns the output folder
@@ -93,15 +94,10 @@ export default class DocumentCompiler {
       options.buildPath || '.temple', 
       this._cwd
     );
+    //use cache
+    this._useCache = options.useCache === false ? false : true;
     //set the prefix brand
     this._brand = options.brand || 'temple';
-    //create a new component compiler
-    this._componentCompiler = new ComponentCompiler({
-      fs: this._fs,
-      cwd: this._cwd,
-      brand: this._brand,
-      buildPath: this._buildPath
-    }, this._compiledComponents);
   }
 
   /**
@@ -112,17 +108,19 @@ export default class DocumentCompiler {
     if (!this._fs.existsSync(sourceFile)) {
       throw Exception.for('File not found: %s', sourceFile);
     }
+    //generate a build id
+    const id = crypto
+      .createHash('shake256', { outputLength: 10 })
+      .update(sourceFile)
+      .digest('hex');
 
-    //load the source code
-    const sourceCode = this._fs.readFileSync(sourceFile, 'utf-8');
-    //parse the source code
-    const ast = TempleParser.parse(sourceCode);
+    const { ast, components } = this.manifest(id, sourceFile);
 
     const document = new TempleDocument();
     document.styles = this.styles(ast.styles).join("\n");
-    document.scripts = await this.build(sourceFile, ast.components);
-    document.head = this.head(ast.markup);
-    document.body = this.body(ast.markup); 
+    document.scripts = await this.build(id, components);
+    document.head = this.head(ast.markup, components);
+    document.body = this.body(ast.markup, components); 
 
     return (props: Record<string, any>) => {
       //return a string of the compiled markup
@@ -134,7 +132,7 @@ export default class DocumentCompiler {
   /**
    * Generates the body markup
    */
-  protected body(markup: MarkupChildToken[]) {
+  protected body(markup: MarkupChildToken[], registry: ComponentRegistry) {
     if (markup.length === 0
       || markup[0].type !== 'MarkupExpression' 
       || markup[0].name !== 'html'
@@ -158,64 +156,44 @@ export default class DocumentCompiler {
       return '';
     }
 
-    return this.markup((body as MarkupToken).children || []);
+    return this.markup((body as MarkupToken).children || [], registry);
   }
 
   /**
    * Compiles all the components and returns a webpack compiler for 
    * bundling all these into a single file
    */
-  protected async build(sourceFile: string, tokens: ComponentToken[]) {
-    //compile all components
-    tokens.forEach(token => {
-      //if you think about it... there can't be any duplicate components
-      //because customElements.define() is a global registry
-      //customElements.define('foo-bar', 'FoobarComponent');
-      //this is why we use this._compiledComponents
-      //(also to prevent recompiling the same components over and over again)
-      //determine the component name
-      //use the file name as the component name
-      const extname = path.extname(token.source.value);
-      const name = path.basename(token.source.value, extname);
-      const slug = slugify(name);
-      //find the file path relative to this file
-      const inputSourceFile = FileLoader.route(
-        sourceFile,
-        token.source.value
-      );
-      //create a component compiler
-      this._compiledComponents[slug] = this._componentCompiler.compile(
-        inputSourceFile
-      );
-      return this._compiledComponents[slug];
-    });
-    //now collect all the components
-    const components = Object.values(this._compiledComponents);
-    const id = crypto
-      .createHash('shake256', { outputLength: 10 })
-      .update(sourceFile)
-      .digest('hex');
+  protected async build(id: string, registry: ComponentRegistry) {
+    //get dynamic build folder
     const buildFolder = path.join(this._buildPath, id);
+    //get the build file path
+    const bundleFile = path.resolve(buildFolder, DocumentCompiler.BUNDLE_FILENAME);
+    //if we are using cache and the file exists, return the file
+    if (this._useCache && this._fs.existsSync(bundleFile)) {
+      return this._fs.readFileSync(bundleFile, 'utf8');
+    }
+    //now collect all the components
+    const components = Object.values(registry);
     //setup the webpack compiler
-    const compiler = new WebpackCompiler({
+    const webpackCompiler = new WebpackCompiler({
       fileSystem: this._fs,
       buildFolder: buildFolder,
-      buildName: DocumentCompiler.BUNDLE_NAME
+      buildName: DocumentCompiler.BUNDLE_FILENAME
     });
     //add the entry file
-    compiler.entry = {
-      path: path.resolve(buildFolder, DocumentCompiler.PAGE_NAME),
-      code: this.generate(components)
+    webpackCompiler.entry = { 
+      path: path.resolve(buildFolder, DocumentCompiler.PAGE_FILENAME), 
+      code: this.generate(components) 
     };
     //add the component files
     components.forEach(component => {
-      compiler.addFile(
+      webpackCompiler.addFile(
         path.resolve(buildFolder, `components/${component.classname}.js`),
         component.code
       );
     });
     //return the webpack compiler
-    return await compiler.compile();
+    return await webpackCompiler.compile();
   }
 
   /**
@@ -255,7 +233,7 @@ export default class DocumentCompiler {
   /**
    * Generates the head markup
    */
-  protected head(markup: MarkupChildToken[]) {
+  protected head(markup: MarkupChildToken[], registry: ComponentRegistry) {
     if (markup.length === 0
       || markup[0].type !== 'MarkupExpression' 
       || markup[0].name !== 'html'
@@ -279,18 +257,85 @@ export default class DocumentCompiler {
       return '';
     }
 
-    return this.markup((head as MarkupToken).children || []);
+    return this.markup((head as MarkupToken).children || [], registry);
+  }
+
+  /**
+   * Builds the manifest
+   */
+  protected manifest(id: string, sourceFile: string) {
+    const manifestPath = path.join(
+      this._buildPath, 
+      id, 
+      DocumentCompiler.MANIFEST_FILENAME
+    );
+    //if use cache and file exists, return the file
+    if (this._useCache) {
+      if (this._fs.existsSync(manifestPath)) {
+        return JSON.parse(this._fs.readFileSync(manifestPath, 'utf-8')) as Manifest;
+      }
+    }
+
+    //load the source code
+    const sourceCode = this._fs.readFileSync(sourceFile, 'utf-8');
+    //parse source code to AST
+    const ast = TempleParser.parse(sourceCode);
+    //create a new component compiler
+    const components: ComponentRegistry = {};
+    const componentCompiler = new ComponentCompiler({
+      fs: this._fs,
+      cwd: this._cwd,
+      brand: this._brand
+    }, components);
+    //compile all components
+    ast.components.forEach(token => {
+      //if you think about it... there can't be any duplicate components
+      //because customElements.define() is a global registry
+      //customElements.define('foo-bar', 'FoobarComponent');
+      //this is why we use compiledComponents
+      //(also to prevent recompiling the same components over and over again)
+      //determine the component name
+      //use the file name as the component name
+      const extname = path.extname(token.source.value);
+      const name = path.basename(token.source.value, extname);
+      const slug = slugify(name);
+      //find the file path relative to this file
+      const inputSourceFile = FileLoader.route(
+        sourceFile,
+        token.source.value
+      );
+      //create a component compiler
+      components[slug] = componentCompiler.compile(
+        inputSourceFile
+      );
+      return components[slug];
+    });
+
+    //if the directory does not exist, create it
+    if (!this._fs.existsSync(path.dirname(manifestPath))) {
+      this._fs.mkdirSync(
+        path.dirname(manifestPath), 
+        { recursive: true }
+      );
+    }
+    //write the manifest file
+    this._fs.writeFileSync(
+      manifestPath, 
+      JSON.stringify({ ast, components }, null, 2)
+    );
+
+    return { ast, components };
   }
 
   /**
    * Compiles the markup
    */
-  protected markup(children: MarkupChildToken[]) {
-    return children.map(child => {
+  protected markup(markup: MarkupChildToken[], registry: ComponentRegistry) {
+    return markup.map(child => {
       let expression = '';
       if (child.type === 'MarkupExpression') {
         const tagName = Object
-          .values(this._compiledComponents)
+          .values(registry)
           .find(component => component.tagname === child.name)
           ? `${this._brand}-${child.name}`
           : child.name; 
@@ -323,7 +368,7 @@ export default class DocumentCompiler {
         } else {
           expression += '>';
           if (child.children) {
-            expression += this.markup(child.children);
+            expression += this.markup(child.children, registry);
           }
           expression += `</${tagName}>`;
         }

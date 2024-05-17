@@ -4,7 +4,8 @@ import { temple } from '@dec0de-io/temple';
 const app = express();
 const template = temple({
   buildPath: '../.temple',
-  cwd: __dirname
+  cwd: __dirname,
+  useCache: true
 });
 
 app.get('/foo/bar/zoo', async (req, res) => {

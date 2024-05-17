@@ -11,7 +11,8 @@ export type CompilerOptions = {
   fs?: typeof fs,
   cwd?: string,
   brand?: string,
-  buildPath?: string
+  buildPath?: string,
+  useCache?: boolean
 };
 
 export type ImportChunk = {
@@ -44,6 +45,11 @@ export type CompilerResults = {
 };
 
 export type ComponentRegistry = Record<string, CompilerResults>;
+
+export type Manifest = {
+  ast: AST,
+  components: ComponentRegistry
+}
 
 export type AST = {
   imports: ImportToken[];

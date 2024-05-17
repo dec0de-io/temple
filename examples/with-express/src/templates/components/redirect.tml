@@ -3,5 +3,6 @@
 </style>
 <script>
   const { href, className, children } = this.props;
+  const attributes = { title: 'Click me' };
 </script>
-<a class={className} href={href}>{children}</a>
+<a class={className} {href} {...attributes}>{children}</a>

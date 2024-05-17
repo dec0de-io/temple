@@ -12,7 +12,7 @@ export function encode(value: any) {
   const json = JSON.stringify(value);
   const blob = new Blob(
     [ json ], 
-    { type: "application/json" }
+    { type: 'application/json' }
   );
   return URL.createObjectURL(blob);
 };
@@ -154,6 +154,17 @@ export default abstract class TempleComponent extends HTMLElement {
 
     return [ this, ...parents ].some(element => element.nextSibling) 
       || document.readyState !== 'loading';
+  }
+
+  /**
+   * Handles spreads
+   */
+  protected spread(props: Record<string, any>) {
+    const spread = [];
+    for (const [ key, value ] of Object.entries(props)) {
+      spread.push(`${key}="${this.encode(value)}"`);
+    }
+    return spread.join(' ');
   }
 
   /**

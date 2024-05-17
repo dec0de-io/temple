@@ -132,7 +132,58 @@ export default class TempleParser {
     while (this.dataParser.optional('whitespace')) {
       //<div class
       const name = this.dataParser.optional<IdentifierToken>('AttributeIdentifier');
-      if (!name) break;
+      if (!name) {
+        //<div {
+        const open = this.dataParser.optional('{');
+        if (open) {
+          //<div {href
+          const identifier = this.dataParser.optional<IdentifierToken>('Identifier');
+          if (identifier) {
+            //<div {href}
+            const close = this.dataParser.expect('}');
+            //add this attribute to the properties
+            //where the value is an identifier
+            properties.push({
+              type: 'Property',
+              kind: 'init',
+              start: open.start,
+              end: close.end,
+              key: identifier,
+              value: identifier,
+              spread: false,
+              method: false,
+              shorthand: false,
+              computed: true
+            });
+            continue;
+          } else {
+            //<div {...
+            const spread = this.dataParser.optional<IdentifierToken>('...');
+            if (spread) {
+              //<div {...foo
+              const identifier = this.dataParser.expect<IdentifierToken>('Identifier');
+              //<div {...foo}
+              const close = this.dataParser.expect('}');
+              //add this attribute to the properties
+              //where the value is a spread identifier
+              properties.push({
+                type: 'Property',
+                kind: 'init',
+                start: open.start,
+                end: close.end,
+                key: identifier,
+                value: identifier,
+                spread: true,
+                method: false,
+                shorthand: false,
+                computed: true
+              });
+              continue;
+            }
+          }
+        }
+        break;
+      }
       //add the offset to the start and end
       name.start += offset;
       name.end += offset;
@@ -154,6 +205,7 @@ export default class TempleParser {
           end: value.end,
           key: name,
           value: value,
+          spread: false,
           method: false,
           shorthand: false,
           computed: value.type === 'Identifier' || value.type === 'ProgramExpression'
@@ -175,6 +227,7 @@ export default class TempleParser {
             value: true,
             raw: 'true'
           },
+          spread: false,
           method: false,
           shorthand: false,
           computed: false

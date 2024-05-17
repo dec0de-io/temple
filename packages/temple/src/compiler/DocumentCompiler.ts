@@ -227,7 +227,8 @@ export default class DocumentCompiler {
     return result.getOutputFiles()
       .filter(file => file.getFilePath().endsWith('.js'))
       .map(file => file.getText())
-      .join('\n'); 
+      .join('\n')
+      .replaceAll('    ', '  '); 
   }
 
   /**
@@ -351,9 +352,12 @@ export default class DocumentCompiler {
                 property.value.value
               }}"`;
             } else if (property.value.type === 'Identifier') {
-              return `${property.key.name}="\${${
+              if (property.spread) {
+                return `\${this.spread(${property.value.name})}`;
+              }
+              return `${property.key.name}="\${this.encode(${
                 property.value.name
-              }}"`;
+              })}"`;
             } else if (property.value.type === 'ProgramExpression') {
               return `${property.key.name}="\${${
                 property.value.source

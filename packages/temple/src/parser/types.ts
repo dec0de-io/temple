@@ -71,6 +71,7 @@ export type PropertyToken = {
   end: number;
   key: IdentifierToken;
   value: DataToken;
+  spread: boolean;
   method: boolean;
   shorthand: boolean;
   computed: boolean;

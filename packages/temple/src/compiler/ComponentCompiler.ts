@@ -231,7 +231,8 @@ export default class ComponentCompiler {
     return result.getOutputFiles()
       .filter(file => file.getFilePath().endsWith('.js'))
       .map(file => file.getText())
-      .join('\n'); 
+      .join('\n')
+      .replaceAll('    ', '  '); 
   }
 
   /**
@@ -282,6 +283,9 @@ export default class ComponentCompiler {
                   .replace(/"\${([a-zA-Z0-9_]+)}"/g, "\${$1}")
               })}"`;
             } else if (property.value.type === 'Identifier') {
+              if (property.spread) {
+                return `\${this.spread(${property.value.name})}`;
+              }
               return `${property.key.name}="\${this.encode(${
                 property.value.name
               })}"`;

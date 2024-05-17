@@ -12,6 +12,7 @@ const definitions: Record<string, Reader> = {
   '<': lexer => scan('_TagOpen', /^</, lexer),
   '>': lexer => scan('_TagClose', /^>/, lexer),
   '=': lexer => scan('_Equals', /^=/, lexer),
+  '...': lexer => scan('_Equals', /^\.{3}/, lexer),
   'Null': lexer => {
     return lexer.code.substring(lexer.index, lexer.index + 4) === 'null' 
       ? { 

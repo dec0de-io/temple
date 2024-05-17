@@ -2,6 +2,6 @@
   :host { font-size: 30px; }
 </style>
 <script>
-  console.log('next');
+  const { href, className, children } = this.props;
 </script>
-<a class=className {href}>{children}</a>
+<a class={className} href={href}>{children}</a>

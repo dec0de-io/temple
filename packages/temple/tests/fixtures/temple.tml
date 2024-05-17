@@ -1,0 +1,56 @@
+<link rel="import" href="./counter.tml" />
+<style>
+  :host { font-size: 21px; }
+</style>
+<script type="text/typescript">
+  import signal from 'temple/signal';
+  
+  let count = signal<number>(value);
+  const up = () => count++;
+  const down = () => count--;
+
+  let index = signal<number>(0);
+  const list = [ 'a', 'b', 'c' ];
+  const hash = { a: 1, b: 2, c: 3 };
+
+  const x = 'x';
+</script>
+
+<if true={count > 0}>
+  <div>+{count}</div>
+</if>
+<if false={count > 0}>
+  <div>{count}</div>
+</if>
+<button click=down>&minus;</button>
+<button click=up>&plus;</button>
+
+<hr />
+
+<while true={index < 2}>
+  {index++}
+</while>
+
+<hr />
+
+<each value="item" from=list>
+  {item}
+</each>
+<each key="i" value="item" from=['a', x, 'c']>
+  {item}{i}
+</each>
+<each key="i" from=list>
+  {i}
+</each>
+
+<hr />
+
+<each value="item" from=hash>
+  {item}
+</each>
+<each key="key" value="item" from={foo: 'bar', bar: x }>
+  {item} {key}
+</each>
+<each key="key" from=hash>
+  {key}
+</each>

@@ -1,11 +1,15 @@
 import express from 'express';
-import temple from 'temple';
+import { temple } from '@dec0de-io/temple';
 
 const app = express();
-const render = temple({ cwd: __dirname });
+const template = temple({
+  buildPath: '../.temple',
+  cwd: __dirname
+});
 
-app.get('/foo/bar/zoo', (req, res) => {
-  const results = render('/foo/bar/zoo', './templates/page.tml', {
+app.get('/foo/bar/zoo', async (req, res) => {
+  const render = await template('./templates/page.tml');
+  const results = render({
     title: 'This is Header 1',
     description: 'This is Paragraph',
     value: 0

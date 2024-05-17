@@ -1,7 +1,6 @@
 <link rel="import" href="./redirect.tml" />
 <script>
-  const { className, children } = this.props;
-  console.log(this.props)
+  console.log('paragraph', className);
 </script>
 <p>
   {children}

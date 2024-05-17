@@ -6,7 +6,7 @@
   ],
   "scripts": {
     "build": "yarn --cwd packages/temple build",
-    "test": "yarn --cwd packages/temple-parser test",
+    "test": "yarn --cwd packages/temple test",
     "dev": "yarn --cwd examples/with-express dev"
   },
   "devDependencies": {

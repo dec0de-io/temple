@@ -10,7 +10,7 @@
   </head>
   <body>
     <header1 class="something">{title}</header1>
-    <paragraph className="something else">{description}</paragraph>
-    <counter start=value />
+    <paragraph className="something more">{description}</paragraph>
+    <counter start={value} />
   </body>
 </html>

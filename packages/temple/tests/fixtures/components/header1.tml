@@ -2,7 +2,6 @@
   :host { font-size: 21px; }
 </style>
 <script>
-  const { className, children } = this.props;
-  console.log(this.props)
+  console.log('header2');
 </script>
 <h1 class=className>{children}</h1>

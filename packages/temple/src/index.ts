@@ -1,28 +1,41 @@
-import type { ComponentOptions, Attributes } from './types';
 
-import TempleMarkup from './compilers/Markup';
-import TempleComponent from './compilers/Component';
-import TempleDocument from './compilers/Document';
+import type { CompilerOptions } from './compiler/types';
 
-import Exception from './utils/Exception';
-import Loader from './utils/Loader';
-import { DOCUMENT_MODE, NS } from './enums';
+import DataParser from './parser/DataParser';
+import GenericLexer from './parser/GenericLexer';
+import SymbolParser from './parser/SymbolParser';
+import TempleParser from './parser/TempleParser';
 
-export type * from './types';
+import ComponentCompiler from './compiler/ComponentCompiler';
+import TempleCompiler from './compiler/DocumentCompiler';
+import FileLoader from './compiler/FileLoader';
+
+import definitions, { 
+  scalar, 
+  data, 
+  scan, 
+  identifier 
+} from './parser/definitions';
+
+function temple(options?: CompilerOptions) {
+  return TempleCompiler.compile(options || {});
+}
+
+export type * from './parser/types';
+export type * from './compiler/types';
 
 export {
-  TempleDocument,
-  TempleComponent,
-  TempleMarkup,
-  Exception,
-  Loader,
-  DOCUMENT_MODE,
-  NS
-};
-
-export default function app(options: ComponentOptions) {
-  const temple = new TempleDocument(options);
-  return function render(route: string, path: string, slots: Attributes = {}) {
-    return temple.render(route, path, slots);
-  }
+  DataParser,
+  GenericLexer,
+  SymbolParser,
+  TempleParser,
+  FileLoader,
+  ComponentCompiler,
+  TempleCompiler,
+  definitions,
+  scalar,
+  data,
+  scan,
+  identifier,
+  temple
 };

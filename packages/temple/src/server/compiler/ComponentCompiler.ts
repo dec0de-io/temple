@@ -22,7 +22,7 @@ import DataParser from '../parser/DataParser';
 import TempleParser from '../parser/TempleParser';
 //helpers
 import { camelize, slugify } from './helpers';
-import Exception from '../Exception';
+import Exception from './CompilerException';
 
 export default class ComponentCompiler {
   //file system to use

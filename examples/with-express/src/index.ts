@@ -1,11 +1,11 @@
 import express from 'express';
-import { temple } from '@dec0de-io/temple';
+import { temple } from '@dec0de-io/temple/server';
 
 const app = express();
 const template = temple({
   buildPath: '../.temple',
   cwd: __dirname,
-  useCache: true
+  useCache: false
 });
 
 app.get('/foo/bar/zoo', async (req, res) => {

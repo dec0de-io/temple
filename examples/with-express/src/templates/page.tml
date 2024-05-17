@@ -1,5 +1,6 @@
 <link rel="import" href="./components/header1.tml" />
 <link rel="import" href="./components/paragraph.tml" />
+<link rel="import" href="./components/counter.tml" />
 <style>
   .something { color: red; }
   .else { display: block; background-color: blue; }
@@ -11,6 +12,6 @@
   <body>
     <header1 class="something">{title}</header1>
     <paragraph className="something else">{description}</paragraph>
-    <counter start=value />
+    <counter start={value} />
   </body>
 </html>

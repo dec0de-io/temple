@@ -19,12 +19,12 @@ import crypto from 'crypto';
 import ts from 'typescript';
 import { Project, IndentationText } from 'ts-morph';
 import TempleParser from '../parser/TempleParser';
-import TempleDocument from '../TempleDocument';
+import TempleDocument from './TempleDocument';
 import ComponentCompiler from './ComponentCompiler';
 import WebpackCompiler from './WebpackCompiler';
 //helpers
 import { slugify } from './helpers';
-import Exception from '../Exception';
+import Exception from './CompilerException';
 
 /**
  * Note: Documents cant have custom scripts because 
@@ -352,12 +352,9 @@ export default class DocumentCompiler {
                 property.value.value
               }}"`;
             } else if (property.value.type === 'Identifier') {
-              if (property.spread) {
-                return `\${this.spread(${property.value.name})}`;
-              }
-              return `${property.key.name}="\${this.encode(${
+              return `${property.key.name}="\${${
                 property.value.name
-              })}"`;
+              }}"`;
             } else if (property.value.type === 'ProgramExpression') {
               return `${property.key.name}="\${${
                 property.value.source

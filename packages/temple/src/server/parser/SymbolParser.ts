@@ -1,5 +1,5 @@
 import { SymbolComplete, SymbolPartial, Walker } from './types';
-import Exception from '../Exception';
+import Exception from './ParserException';
 
 export default class SymbolParser {
   //symbols to split the code by

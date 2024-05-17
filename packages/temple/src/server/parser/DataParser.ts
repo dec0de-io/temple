@@ -9,7 +9,7 @@ import type {
   IdentifierToken
 } from './types';
 
-import Exception from '../Exception';
+import Exception from './ParserException';
 
 export default class DataParser {
   /**

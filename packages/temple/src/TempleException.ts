@@ -2,7 +2,7 @@
  * Exceptions are used to give more information
  * of an error that has occured
  */
-export default class Exception extends Error {
+export default class TempleException extends Error {
   /**
    * Error code
    */
@@ -21,7 +21,7 @@ export default class Exception extends Error {
   /**
    * General use expressive reasons
    */
-  static for(message: string, ...values: string[]): Exception {
+  static for(message: string, ...values: string[]): TempleException {
     values.forEach(function(value) {
       message = message.replace('%s', value);
     });
@@ -42,7 +42,7 @@ export default class Exception extends Error {
   /**
    * Expressive way to set an error code
    */
-  withCode(code: number): Exception {
+  withCode(code: number) {
     this.code = code;
     return this;
   }
@@ -50,7 +50,7 @@ export default class Exception extends Error {
   /**
    * Expressive way to set syntax position
    */
-  withPosition(start: number, end: number): Exception {
+  withPosition(start: number, end: number) {
     this.start = start;
     this.end = end;
     return this;

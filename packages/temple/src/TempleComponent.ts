@@ -1,28 +1,21 @@
-export async function decode(bloburl: string) {
-  return fetch(bloburl)
-    .then(resp => resp.blob())
-    .then(blob => blob.text())
-    .then(JSON.parse);
-};
-
-export function encode(value: any) {
-  if (typeof value === 'string') {
-    return value;
-  }
-  const json = JSON.stringify(value);
-  const blob = new Blob(
-    [ json ], 
-    { type: 'application/json' }
-  );
-  return URL.createObjectURL(blob);
-};
-
 export default abstract class TempleComponent extends HTMLElement {
+  //current component
+  protected static _current: TempleComponent|null = null;
+
+  /**
+   * Returns the current component
+   */
+  public static get current() {
+    return TempleComponent._current;
+  }
+
   //component props
   protected _properties: Record<string, any> = {};
   protected _serialized: string = '';
   //whether shadow mode is on
   protected _shadowRoot: ShadowRoot|null = null;
+  //whether the component has initiated
+  protected _initiated: boolean = false;
 
   /**
    * Returns the component styles
@@ -39,6 +32,13 @@ export default abstract class TempleComponent extends HTMLElement {
    */
   public get props() {
     return this._properties;
+  }
+
+  /**
+   * Returns whether the component has initiated
+   */
+  public get initiated() {
+    return this._initiated;
   }
 
   /**
@@ -109,31 +109,55 @@ export default abstract class TempleComponent extends HTMLElement {
    * Renders the component
    */
   public render() {
+    //set the current component
+    TempleComponent._current = this;
+    //get the styles
     const styles = this.styles();
+    //get the template
     const template = this.template();
+    //if no styles, just set the innerHTML
     if (styles.length === 0) {
       this.innerHTML = template;
+    //there are styles, use shadow dom
     } else {
+      //if shadow root is not set, create it
       if (!this._shadowRoot) {
         this._shadowRoot = this.attachShadow({ mode: 'open' });
       }
+      //empty the current innerHTML
+      //the old data is captured in props
       this.innerHTML = '';
+      //set the shadow root
       this._shadowRoot.innerHTML = `<style>${styles}</style>${template}`;
     }
+    //reset the current component
+    TempleComponent._current = null;
+    this._initiated = true;
   }
 
   /**
    * Helper to decode a value from a URI blob memory
    */
   protected async decode(bloburl: string) {
-    return decode(bloburl);
+    return fetch(bloburl)
+      .then(resp => resp.blob())
+      .then(blob => blob.text())
+      .then(JSON.parse);
   }
   
   /**
    * Helper to encode a value to URI blob memory
    */
   protected encode(value: any) {
-    return encode(value);
+    if (typeof value === 'string') {
+      return value;
+    }
+    const json = JSON.stringify(value);
+    const blob = new Blob(
+      [ json ], 
+      { type: 'application/json' }
+    );
+    return URL.createObjectURL(blob);
   }
 
   /**

@@ -2,7 +2,8 @@
   :host { font-size: 21px; }
 </style>
 <script>
-  const { className, children } = this.props;
-  console.log(this.props)
+  import props from '@dec0de-io/temple/dist/props';
+  const { className, children } = props();
+  console.log(props())
 </script>
 <h1 class=className>{children}</h1>

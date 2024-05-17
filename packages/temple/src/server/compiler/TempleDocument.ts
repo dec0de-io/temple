@@ -1,20 +1,4 @@
-const template = `<!DOCTYPE html><html><head>%s</head><body>%s</body></html>`;
-
-export async function decode(bloburl: string) {
-  return fetch(bloburl)
-    .then(resp => resp.blob())
-    .then(blob => blob.text())
-    .then(JSON.parse);
-};
-
-export function encode(value: any) {
-  const json = JSON.stringify(value);
-  const blob = new Blob(
-    [ json ], 
-    { type: "application/json" }
-  );
-  return URL.createObjectURL(blob);
-};
+const template = `<!DOCTYPE html><html><head>{__HEAD__}</head><body>{__BODY__}</body></html>`;
 
 export default class TempleDocument {
   //component props
@@ -83,8 +67,8 @@ export default class TempleDocument {
     }
 
     let document = template
-      .replace('%s', head.join('\n'))
-      .replace('%s', this._body);
+      .replace('{__HEAD__}', head.join('\n'))
+      .replace('{__BODY__}', this._body);
     //somehow bind the props to the document...
     for (const key in this._properties) {
       document = document.replace(
@@ -93,19 +77,5 @@ export default class TempleDocument {
       );
     }
     return document;
-  }
-
-  /**
-   * Helper to decode a value from a URI blob memory
-   */
-  protected async decode(bloburl: string) {
-    return decode(bloburl);
-  }
-  
-  /**
-   * Helper to encode a value to URI blob memory
-   */
-  protected encode(value: any) {
-    return encode(value);
   }
 }

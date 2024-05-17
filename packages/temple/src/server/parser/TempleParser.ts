@@ -18,7 +18,7 @@ import ts from 'typescript';
 import DataParser from './DataParser';
 import SymbolParser from './SymbolParser';
 import GenericLexer from './GenericLexer';
-import Exception from '../Exception';
+import Exception from './ParserException';
 import definitions, { data as anyData } from './definitions';
 
 const lexer = new GenericLexer();

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import webpack from 'webpack';
-import Exception from '../Exception';
+import Exception from './CompilerException';
 
 export type Options = { 
   fileSystem: typeof fs,

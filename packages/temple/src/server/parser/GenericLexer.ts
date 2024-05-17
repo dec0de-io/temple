@@ -1,6 +1,6 @@
 import { Parser, Reader, Token, Definition } from './types';
 
-import Exception from '../Exception';
+import Exception from './ParserException';
 
 export default class GenericLexer implements Parser {
   //the code to parse

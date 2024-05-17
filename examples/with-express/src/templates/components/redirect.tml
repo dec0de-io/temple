@@ -2,7 +2,8 @@
   :host { font-size: 30px; }
 </style>
 <script>
-  const { href, className, children } = this.props;
+  import props from '@dec0de-io/temple/dist/props';
+  const { href, className, children } = props();
   const attributes = { title: 'Click me' };
 </script>
 <a class={className} {href} {...attributes}>{children}</a>

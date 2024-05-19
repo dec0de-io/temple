@@ -1,6 +1,6 @@
-import type { Listenable, EventAction } from './types/EventEmitter';
+import type { Listenable, EventAction } from '../types/EventEmitter';
 
-import EventEmitter from './types/EventEmitter';
+import EventEmitter from '../types/EventEmitter';
 
 export class TempleEmitter<Args extends any[]> extends EventEmitter<Args> {
   /**

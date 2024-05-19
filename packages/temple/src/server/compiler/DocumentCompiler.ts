@@ -215,9 +215,9 @@ export default class DocumentCompiler {
     });
     //create a new source file
     const source = project.createSourceFile('page.ts');
-    //import '@dec0de-io/temple/dist/TempleAttribute'
+    //import '@dec0de-io/temple/dist/client/TempleHelpers'
     source.addImportDeclaration({
-      moduleSpecifier: '@dec0de-io/temple/dist/TempleHelpers'
+      moduleSpecifier: '@dec0de-io/temple/dist/client/TempleHelpers'
     });
     components.forEach(component => {
       //import './components/Counter'

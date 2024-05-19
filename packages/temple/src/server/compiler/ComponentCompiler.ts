@@ -3,10 +3,11 @@ import type {
   ComponentToken,
   IdentifierToken,
   ImportToken, 
+  MarkupToken,
   MarkupChildToken, 
   PropertyToken, 
   ScriptToken,
-  StyleToken,
+  StyleToken
 } from '../parser/types';
 import type { 
   CompilerOptions, 
@@ -174,14 +175,14 @@ export default class ComponentCompiler {
     });
     //create a new source file
     const source = project.createSourceFile(`${classname}.ts`);
-    //import TempleElement from '@dec0de-io/temple/dist/TempleElement'
+    //import TempleElement from '@dec0de-io/temple/dist/client/TempleElement'
     source.addImportDeclaration({
-      moduleSpecifier: '@dec0de-io/temple/dist/TempleElement',
+      moduleSpecifier: '@dec0de-io/temple/dist/client/TempleElement',
       defaultImport: 'TempleElement'
     });
-    //import TempleComponent from '@dec0de-io/temple/dist/TempleComponent'
+    //import TempleComponent from '@dec0de-io/temple/dist/client/TempleComponent'
     source.addImportDeclaration({
-      moduleSpecifier: '@dec0de-io/temple/dist/TempleComponent',
+      moduleSpecifier: '@dec0de-io/temple/dist/client/TempleComponent',
       defaultImport: 'TempleComponent'
     });
     //import others from <script>
@@ -260,147 +261,16 @@ export default class ComponentCompiler {
     return "[\n" + markup.map(child => {
       let expression = '';
       if (child.type === 'MarkupExpression') {
-        const tagName = Object
-          .keys(this._compiledComponents)
-          .find(tagName => tagName === child.name)
-          ? `${this._brand}-${child.name}`
-          : child.name; 
+        const tagName = this.tagName(child); 
         if (tagName === 'if') {
           //syntax <if true={count > 1}>...</if>
-          if (!child.attributes 
-            || child.attributes.properties.length === 0 
-          ) {
-            throw Exception.for('Invalid if statement');
-          }
-          const truesy = child.attributes.properties.find(
-            property => property.key.name === 'true'
-          );
-          const falsesy = child.attributes.properties.find(
-            property => property.key.name === 'false'
-          );
-          if (!truesy && !falsesy) {
-            throw Exception.for('Invalid if statement');
-          }
-          expression += '...(!';
-          if (truesy) {
-            expression += '!';
-          }
-          const property = (truesy || falsesy) as PropertyToken;
-          if (property.value.type === 'ProgramExpression') {
-            const script = property.value as ScriptToken;
-            expression += `(${script.source}) ? `;
-          } else if (property.value.type === 'Literal') {
-            if (typeof property.value.value === 'string') {
-              expression += `('${property.value.value}') ? `;
-            } else {
-              expression += `(${property.value.value}) ? `;
-            }
-          } else if (property.value.type === 'Identifier') {
-            expression += `(${property.value.name}) ? `;
-          } else {
-            throw Exception.for('Invalid if statement');
-          }
-          
-          if (child.children) {
-            expression += this.markup(child.children);
-          } else {
-            expression += '[]';
-          }
-          expression += ' : [])';
-          return expression;
+          return this.markupConditional(child);
         } else if (tagName === 'each') {
           //syntax <each value=item key=i from=list>...</each>
-          if (!child.attributes 
-            || child.attributes.properties.length === 0 
-          ) {
-            throw Exception.for('Invalid each statement');
-          }
-          const key = child.attributes.properties.find(
-            property => property.key.name === 'key'
-          );
-          const value = child.attributes.properties.find(
-            property => property.key.name === 'value'
-          );
-          const from = child.attributes.properties.find(
-            property => property.key.name === 'from'
-          );
-          if (!from || (!key && !value)) {
-            throw Exception.for('Invalid each statement');
-          } else if (key && key.value.type !== 'Identifier') {
-            throw Exception.for('Invalid key value in each');
-          } else if (value && value.value.type !== 'Identifier') {
-            throw Exception.for('Invalid value in each');
-          }
-          const keyName = (key?.value as IdentifierToken)?.name || '_';
-          const valueName = (value?.value as IdentifierToken)?.name || '_';
-          expression += `...`;
-          if (from.value.type === 'ProgramExpression') {
-            const script = from.value as ScriptToken;
-            expression += `Object.entries(${script.source})`;
-          } else if (from.value.type === 'ArrayExpression') {
-            expression += `Object.entries(${JSON.stringify(DataParser.array(from.value))})`;
-          } else if (from.value.type === 'ObjectExpression') {
-            expression += `Object.entries(${JSON.stringify(DataParser.object(from.value))})`;
-          } else if (from.value.type === 'Identifier') {
-            expression += `Object.entries(${from.value.name})`;
-          } else {
-            throw Exception.for('Invalid from value in each');
-          }
-          expression += `.map(([${keyName}, ${valueName}]) => `;
-          if (child.children) {
-            expression += this.markup(child.children);
-          } else {
-            expression += '[]';
-          }
-          expression += ').flat()';
-          return expression;
+          return this.markupIterator(child);
         }
-        expression += `TempleElement.create('${tagName}', {`;
-        if (child.attributes && child.attributes.properties.length > 0) {
-          expression += ' ' + child.attributes.properties.map(property => {
-            if (property.value.type === 'Literal') {
-              if (typeof property.value.value === 'string') {
-                return `'${property.key.name}': \`${property.value.value}\``;
-              }
-              //null, true, false, number 
-              return `'${property.key.name}': ${property.value.value}`;
-            } else if (property.value.type === 'ObjectExpression') {
-              return `'${property.key.name}': ${
-                JSON.stringify(DataParser.object(property.value))
-                  .replace(/"([a-zA-Z0-9_]+)":/g, "$1:")
-                  .replace(/"\${([a-zA-Z0-9_]+)}"/g, "$1")
-              }`;
-            } else if (property.value.type === 'ArrayExpression') {
-              return `'${property.key.name}': ${
-                JSON.stringify(DataParser.array(property.value))
-                  .replace(/"([a-zA-Z0-9_]+)":/g, "$1:")
-                  .replace(/"\${([a-zA-Z0-9_]+)}"/g, "$1")
-              }`;
-            } else if (property.value.type === 'Identifier') {
-              if (property.spread) {
-                return `...${property.value.name}`;
-              }
-              return `'${property.key.name}': ${
-                property.value.name
-              }`;
-            } else if (property.value.type === 'ProgramExpression') {
-              return `'${property.key.name}': ${
-                property.value.source
-              }`;
-            }
-
-            return false;
-          }).filter(Boolean).join(', ');
-        }
-        if (child.kind === 'inline') {
-          expression += ' }).element';
-        } else {
-          expression += ' }, ';
-          if (child.children) {
-            expression += this.markup(child.children);
-          }
-          expression += `).element`;
-        }
+        //syntax <div title="Some Title">...</div>
+        expression += this.markupElement(tagName, expression, child);
       } else if (child.type === 'Literal') {
         if (typeof child.value === 'string') {
           expression += `document.createTextNode(\`${child.value}\`)`;
@@ -427,5 +297,179 @@ export default class ComponentCompiler {
    */
   protected styles(styles: StyleToken[]) {
     return styles.map(style => style.source);
+  }
+
+  /**
+   * Generated the markup for a conditional statement
+   */
+  private markupConditional(token: MarkupToken) {
+    let expression = '';
+    //syntax <if true={count > 1}>...</if>
+    if (!token.attributes 
+      || token.attributes.properties.length === 0 
+    ) {
+      throw Exception.for('Invalid if statement');
+    }
+    const truesy = token.attributes.properties.find(
+      property => property.key.name === 'true'
+    );
+    const falsesy = token.attributes.properties.find(
+      property => property.key.name === 'false'
+    );
+    if (!truesy && !falsesy) {
+      throw Exception.for('Invalid if statement');
+    }
+    expression += '...(!';
+    if (truesy) {
+      expression += '!';
+    }
+    const property = (truesy || falsesy) as PropertyToken;
+    if (property.value.type === 'ProgramExpression') {
+      const script = property.value as ScriptToken;
+      expression += `(${script.source}) ? `;
+    } else if (property.value.type === 'Literal') {
+      if (typeof property.value.value === 'string') {
+        expression += `('${property.value.value}') ? `;
+      } else {
+        expression += `(${property.value.value}) ? `;
+      }
+    } else if (property.value.type === 'Identifier') {
+      expression += `(${property.value.name}) ? `;
+    } else {
+      throw Exception.for('Invalid if statement');
+    }
+    
+    if (token.children) {
+      expression += this.markup(token.children);
+    } else {
+      expression += '[]';
+    }
+    expression += ' : [])';
+    return expression;
+  }
+
+  /**
+   * Generates the markup for a standard element
+   */
+  private markupElement(
+    tagName: string, 
+    expression: string, 
+    token: MarkupToken
+  ) {
+    expression += `TempleElement.create('${tagName}', {`;
+    if (token.attributes && token.attributes.properties.length > 0) {
+      expression += ' ' + token.attributes.properties.map(property => {
+        if (property.value.type === 'Literal') {
+          if (typeof property.value.value === 'string') {
+            return `'${property.key.name}': \`${property.value.value}\``;
+          }
+          //null, true, false, number 
+          return `'${property.key.name}': ${property.value.value}`;
+        } else if (property.value.type === 'ObjectExpression') {
+          return `'${property.key.name}': ${
+            JSON.stringify(DataParser.object(property.value))
+              .replace(/"([a-zA-Z0-9_]+)":/g, "$1:")
+              .replace(/"\${([a-zA-Z0-9_]+)}"/g, "$1")
+          }`;
+        } else if (property.value.type === 'ArrayExpression') {
+          return `'${property.key.name}': ${
+            JSON.stringify(DataParser.array(property.value))
+              .replace(/"([a-zA-Z0-9_]+)":/g, "$1:")
+              .replace(/"\${([a-zA-Z0-9_]+)}"/g, "$1")
+          }`;
+        } else if (property.value.type === 'Identifier') {
+          if (property.spread) {
+            return `...${property.value.name}`;
+          }
+          return `'${property.key.name}': ${
+            property.value.name
+          }`;
+        } else if (property.value.type === 'ProgramExpression') {
+          return `'${property.key.name}': ${
+            property.value.source
+          }`;
+        }
+
+        return false;
+      }).filter(Boolean).join(', ');
+    }
+    if (token.kind === 'inline') {
+      expression += ' }).element';
+    } else {
+      expression += ' }, ';
+      if (token.children) {
+        expression += this.markup(token.children);
+      }
+      expression += `).element`;
+    }
+    
+    return expression;
+  }
+
+  /**
+   * Generates the markup for an iterator (each)
+   */
+  private markupIterator(token: MarkupToken) {
+    let expression = '';
+    //syntax <each value=item key=i from=list>...</each>
+    if (!token.attributes 
+      || token.attributes.properties.length === 0 
+    ) {
+      throw Exception.for('Invalid each statement');
+    }
+    const key = token.attributes.properties.find(
+      property => property.key.name === 'key'
+    );
+    const value = token.attributes.properties.find(
+      property => property.key.name === 'value'
+    );
+    const from = token.attributes.properties.find(
+      property => property.key.name === 'from'
+    );
+    if (!from || (!key && !value)) {
+      throw Exception.for('Invalid each statement');
+    } else if (key && key.value.type !== 'Identifier') {
+      throw Exception.for('Invalid key value in each');
+    } else if (value && value.value.type !== 'Identifier') {
+      throw Exception.for('Invalid value in each');
+    }
+    const keyName = (key?.value as IdentifierToken)?.name || '_';
+    const valueName = (value?.value as IdentifierToken)?.name || '_';
+    expression += `...`;
+    if (from.value.type === 'ProgramExpression') {
+      const script = from.value as ScriptToken;
+      expression += `Object.entries(${script.source})`;
+    } else if (from.value.type === 'ArrayExpression') {
+      expression += `Object.entries(${
+        JSON.stringify(DataParser.array(from.value))
+      })`;
+    } else if (from.value.type === 'ObjectExpression') {
+      expression += `Object.entries(${
+        JSON.stringify(DataParser.object(from.value))
+      })`;
+    } else if (from.value.type === 'Identifier') {
+      expression += `Object.entries(${from.value.name})`;
+    } else {
+      throw Exception.for('Invalid from value in each');
+    }
+    expression += `.map(([${keyName}, ${valueName}]) => `;
+    if (token.children) {
+      expression += this.markup(token.children);
+    } else {
+      expression += '[]';
+    }
+    expression += ').flat()';
+    return expression;
+  }
+
+  /**
+   * Determines the tag name
+   */
+  private tagName(token: MarkupToken) {
+    const isComponent = Object
+      .keys(this._compiledComponents)
+      .find(tagName => tagName === token.name);
+
+    return isComponent? `${this._brand}-${token.name}`: token.name; 
   }
 }

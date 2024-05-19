@@ -1,5 +1,5 @@
 import TempleComponent from './TempleComponent';
-import Exception from './TempleException';
+import Exception from '../TempleException';
 
 export type Observer = {
   observed: number,

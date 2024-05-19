@@ -12,6 +12,6 @@
   <body>
     <header1 class="something">{title}</header1>
     <paragraph className="something else">{description}</paragraph>
-    <counter start={value} />
+    <counter start=value />
   </body>
 </html>

@@ -1,9 +1,10 @@
-declare global {
-  interface Window {
-    __SERVER_PROPS__: Record<string, any>;
-  }
-}
+import TempleElement from './TempleElement';
 
+//The server will pass data to the browser using a <script> in the head.
+//This data will be stored in a global variable window.__SERVER_PROPS__.
+declare global { 
+  interface Window {__SERVER_PROPS__: Record<string, any> }
+}
 const ServerProps = window.__SERVER_PROPS__;
 
 export default abstract class TempleComponent extends HTMLElement {
@@ -18,8 +19,7 @@ export default abstract class TempleComponent extends HTMLElement {
   }
 
   //component props
-  protected _properties: Record<string, any> = {};
-  protected _serialized: string = '';
+  protected _element: TempleElement;
   //whether shadow mode is on
   protected _shadowRoot: ShadowRoot|null = null;
   //whether the component has initiated
@@ -33,13 +33,13 @@ export default abstract class TempleComponent extends HTMLElement {
   /**
    * Returns the component template
    */
-  public abstract template(): string;
+  public abstract template(): (HTMLElement|false)[];
 
   /**
    * Returns the component properties
    */
   public get props() {
-    return this._properties;
+    return Object.assign({}, this._element.attributes);
   }
 
   /**
@@ -53,58 +53,45 @@ export default abstract class TempleComponent extends HTMLElement {
    * Sets the component properties
    */
   public set props(props: Record<string, any>) {
-    const serialized = JSON.stringify(props);
-    if (serialized !== this._serialized) {
-      (async () => {
-        this._properties = {};
-        for (const [ name, value ] of Object.entries(props)) {
-          if (value.startsWith('blob:')) {
-            let decoded = await this.decode(value);
-            if (value === 'true') {
-              decoded = true;
-            } else if (value === 'false') {
-              decoded = false;
-            } else if (value === 'null') {
-              decoded = null;
-            }
-            this._properties[name] = decoded;
-          } else if (value.startsWith('data:')) {
-            let decoded = value.substring(5);
-            if (value === 'true') {
-              decoded = true;
-            } else if (value === 'false') {
-              decoded = false;
-            } else if (value === 'null') {
-              decoded = null;
-            }
-            this._properties[name] = decoded;
-          } else if (value.startsWith('prop:')) {
-            const key = value.substring(5);
-            if (typeof ServerProps[key] !== 'undefined') {
-              this._properties[name] = ServerProps[key];
-            }
-          } else if (value.startsWith('script:')) {
-            const program = Object.keys(ServerProps).reduce(
-              (script, key) => script.replace(
-                key, 
-                JSON.stringify(ServerProps[key])
-              ), 
-              value.substring(7)
-            );
-            console.log(program)
-            try {
-              this._properties[name] = new Function(`return ${program}`)();
-            } catch (error) {
-              console.error(error);
-            }
-          } else {
-            this._properties[name] = value;
-          } 
-        }
-        this._serialized = serialized;
-        this.render();
-      })()
+    //if the serialized props is not the same as the current serialized props
+    if (this._element.serialize(props) !== this._element.serialize()) {
+      //clone the props
+      const properties = Object.assign({}, props);
+      //loop through the props
+      for (const [ name, value ] of Object.entries(props)) {
+        //check data being passed from server to browser
+        //if this is a literal value
+        if (value.startsWith('data:')) {
+          let decoded = value.substring(5);
+          if (value === 'true') {
+            decoded = true;
+          } else if (value === 'false') {
+            decoded = false;
+          } else if (value === 'null') {
+            decoded = null;
+          }
+          properties[name] = decoded;
+        } else if (value.startsWith('prop:')) {
+          const key = value.substring(5);
+          if (typeof ServerProps[key] !== 'undefined') {
+            properties[name] = ServerProps[key];
+          }
+        } else {
+          properties[name] = value;
+        } 
+      }
+
+      this._element.setAttributes(properties);
+      this.render();
     }
+  }
+
+  /**
+   * Add this component to the overall registry
+   */
+  public constructor() {
+    super();
+    this._element = TempleElement.register(this);
   }
 
   /**
@@ -124,7 +111,7 @@ export default abstract class TempleComponent extends HTMLElement {
     previous: string, 
     value: string
   ) {
-    this.props = { ...this._properties, [name]: value };
+    this.props = { ...this.props, [name]: value };
   }
 
   /**
@@ -151,50 +138,30 @@ export default abstract class TempleComponent extends HTMLElement {
     //get the styles
     const styles = this.styles();
     //get the template
-    const template = this.template();
+    const template = this.template().filter(Boolean) as HTMLElement[];
     //if no styles, just set the innerHTML
     if (styles.length === 0) {
-      this.innerHTML = template;
+      //empty the current text content
+      this.textContent = '';
+      template.forEach(child => this.appendChild(child));
     //there are styles, use shadow dom
     } else {
       //if shadow root is not set, create it
       if (!this._shadowRoot) {
         this._shadowRoot = this.attachShadow({ mode: 'open' });
       }
-      //empty the current innerHTML
+      //empty the current text content
       //the old data is captured in props
-      this.innerHTML = '';
+      this.textContent = '';
+      const style = document.createElement('style');
+      style.innerText = styles;
+      this._shadowRoot.appendChild(style);
       //set the shadow root
-      this._shadowRoot.innerHTML = `<style>${styles}</style>${template}`;
+      template.forEach(child => this._shadowRoot?.appendChild(child));
     }
     //reset the current component
     TempleComponent._current = null;
     this._initiated = true;
-  }
-
-  /**
-   * Helper to decode a value from a URI blob memory
-   */
-  protected async decode(bloburl: string) {
-    return fetch(bloburl)
-      .then(resp => resp.blob())
-      .then(blob => blob.text())
-      .then(JSON.parse);
-  }
-  
-  /**
-   * Helper to encode a value to URI blob memory
-   */
-  protected encode(value: any) {
-    if (typeof value === 'string') {
-      return value;
-    }
-    const json = JSON.stringify(value);
-    const blob = new Blob(
-      [ json ], 
-      { type: 'application/json' }
-    );
-    return URL.createObjectURL(blob);
   }
 
   /**
@@ -218,17 +185,6 @@ export default abstract class TempleComponent extends HTMLElement {
   }
 
   /**
-   * Handles spreads
-   */
-  protected spread(props: Record<string, any>) {
-    const spread = [];
-    for (const [ key, value ] of Object.entries(props)) {
-      spread.push(`${key}="${this.encode(value)}"`);
-    }
-    return spread.join(' ');
-  }
-
-  /**
    * Sets the initial properties and children
    */
   protected update(children: string) { 
@@ -248,7 +204,7 @@ export default abstract class TempleComponent extends HTMLElement {
       delete entries.classname;
     }
 
-    this.props = { ...this._properties, ...entries, children };
+    this.props = { ...this.props, ...entries, children };
   }
 
   /**

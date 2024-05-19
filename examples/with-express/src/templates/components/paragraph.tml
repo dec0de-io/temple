@@ -1,10 +1,19 @@
 <link rel="import" href="./redirect.tml" />
 <script>
-  import props from '@dec0de-io/temple/dist/props';
+  import { props } from '@dec0de-io/temple';
   const { className, children } = props();
   console.log(props())
+  const list = [ 'a', 'b', 'c' ];
 </script>
 <p>
   {children}
   <redirect class=className href="/">Link</redirect>
 </p>
+
+<if true={list.length > 0}>
+  <ul>
+    <each value=item from=list>
+      <li>{item}</li>
+    </each>
+  </ul>
+</if>

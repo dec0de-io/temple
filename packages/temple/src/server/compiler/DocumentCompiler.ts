@@ -215,6 +215,10 @@ export default class DocumentCompiler {
     });
     //create a new source file
     const source = project.createSourceFile('page.ts');
+    //import '@dec0de-io/temple/dist/TempleAttribute'
+    source.addImportDeclaration({
+      moduleSpecifier: '@dec0de-io/temple/dist/TempleAttribute'
+    });
     components.forEach(component => {
       //import './components/Counter'
       source.addImportDeclaration({
@@ -340,24 +344,20 @@ export default class DocumentCompiler {
           .find(component => component.tagname === child.name)
           ? `${this._brand}-${child.name}`
           : child.name; 
-        expression = `<${tagName}`;
+        expression += `<${tagName}`;
         if (child.attributes && child.attributes.properties.length > 0) {
           expression += ' ' + child.attributes.properties.map(property => {
             if (property.value.type === 'Literal') {
               if (typeof property.value.value === 'string') {
                 return `${property.key.name}="${property.value.value}"`;
               }
-              //null, true, false, number will be passed as a blob url
+              //null, true, false, number
               return `${property.key.name}="data:${
                 property.value.value
               }"`;
             } else if (property.value.type === 'Identifier') {
               return `${property.key.name}="prop:${
                 property.value.name
-              }"`;
-            } else if (property.value.type === 'ProgramExpression') {
-              return `${property.key.name}="script:${
-                property.value.source
               }"`;
             }
 

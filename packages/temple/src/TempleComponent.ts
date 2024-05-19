@@ -1,4 +1,5 @@
 import TempleElement from './TempleElement';
+import TempleEmitter from './TempleEmitter';
 
 //The server will pass data to the browser using a <script> in the head.
 //This data will be stored in a global variable window.__SERVER_PROPS__.
@@ -24,6 +25,7 @@ export default abstract class TempleComponent extends HTMLElement {
   protected _shadowRoot: ShadowRoot|null = null;
   //whether the component has initiated
   protected _initiated: boolean = false;
+  protected _template: (() => (Element|false)[])|null = null;
 
   /**
    * Returns the component styles
@@ -33,7 +35,7 @@ export default abstract class TempleComponent extends HTMLElement {
   /**
    * Returns the component template
    */
-  public abstract template(): (HTMLElement|false)[];
+  public abstract template(): () => (Element|false)[];
 
   /**
    * Returns the component properties
@@ -76,9 +78,7 @@ export default abstract class TempleComponent extends HTMLElement {
           if (typeof ServerProps[key] !== 'undefined') {
             properties[name] = ServerProps[key];
           }
-        } else {
-          properties[name] = value;
-        } 
+        }
       }
 
       this._element.setAttributes(properties);
@@ -138,7 +138,10 @@ export default abstract class TempleComponent extends HTMLElement {
     //get the styles
     const styles = this.styles();
     //get the template
-    const template = this.template().filter(Boolean) as HTMLElement[];
+    if (!this._template) {
+      this._template = this.template();
+    }
+    const template = this._template().filter(Boolean) as Element[];
     //if no styles, just set the innerHTML
     if (styles.length === 0) {
       //empty the current text content
@@ -162,6 +165,8 @@ export default abstract class TempleComponent extends HTMLElement {
     //reset the current component
     TempleComponent._current = null;
     this._initiated = true;
+    //emit the render event
+    TempleEmitter.emit('render', this);
   }
 
   /**
@@ -193,16 +198,6 @@ export default abstract class TempleComponent extends HTMLElement {
         attribute => [ attribute.nodeName, attribute.nodeValue ]
       )
     );
-
-    if (entries.class) {
-      entries.className = entries.class;
-      delete entries.class;
-    }
-
-    if (entries.classname) {
-      entries.className = entries.classname;
-      delete entries.classname;
-    }
 
     this.props = { ...this.props, ...entries, children };
   }

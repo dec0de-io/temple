@@ -2,12 +2,17 @@
   import { props, signal } from '@dec0de-io/temple';
   const { start } = props();
   const count = signal<number>(start);
-  console.log('count', count, count.value)
-  setTimeout(() => count.value++, 3000);
+  console.log('count', count, count.value);
+  const up = () => {
+    console.log('up', count.value);
+    count.value++
+  };
 </script>
 
-<if true={count.value > 2}>
+<if true={count.value > 0}>
   <div>
     Reactive Counter: <strong>{count.value}</strong>
   </div>
 </if>
+
+<button click=up>Add</button>

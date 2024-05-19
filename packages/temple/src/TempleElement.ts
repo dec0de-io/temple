@@ -1,6 +1,8 @@
+import TempleEmitter from './TempleEmitter';
+
 export type RegistryIterator<T = any> = (
   temple: TempleElement,
-  element: HTMLElement
+  element: Element
 ) => T;
 
 /**
@@ -8,7 +10,7 @@ export type RegistryIterator<T = any> = (
  */
 export default class TempleElement {
   //A registry of all TempleElement instances
-  protected static registry = new Map<HTMLElement, TempleElement>();
+  protected static registry = new Map<Element, TempleElement>();
 
   /**
    * Creates a new TempleElement instance
@@ -16,11 +18,11 @@ export default class TempleElement {
   public static create(
     name: string, 
     attributes: Record<string, any>, 
-    children: HTMLElement[] = []
+    children: Element[] = []
   ) {
     const element = document.createElement(name);
     for (const [ key, value ] of Object.entries(attributes)) {
-      if (typeof value === 'string') {
+      if (typeof value === 'string' && key !== 'children') {
         element.setAttribute(key, value);
       }
     }
@@ -44,7 +46,7 @@ export default class TempleElement {
   /**
    * Returns the TempleElement instance for the given element
    */
-  public static get(element: HTMLElement) {
+  public static get(element: Element) {
     return this.registry.get(element) || null;
   }
 
@@ -60,24 +62,9 @@ export default class TempleElement {
   }
 
   /**
-   * Waits for the DOM to be ready before calling the next function
-   */
-  public static onReady(next: Function) {
-    // see if DOM is already available
-    if (document.readyState === 'complete' 
-      || document.readyState === 'interactive'
-    ) {
-      // call on next available tick
-      setTimeout(next, 1);
-    } else {
-      document.addEventListener('DOMContentLoaded', () => next());
-    }
-  }
-
-  /**
    * Registers a new TempleElement instance
    */
-  public static register(element: HTMLElement, attributes?: Record<string, any>) {
+  public static register(element: Element, attributes?: Record<string, any>) {
     if (this.registry.has(element)) {
       return this.get(element) as TempleElement;
     }
@@ -85,7 +72,7 @@ export default class TempleElement {
   }
 
   //the html element
-  protected _element: HTMLElement;
+  protected _element: Element;
   //the html element attributes (with any value)
   protected _attributes: Record<string, any>;
 
@@ -106,15 +93,9 @@ export default class TempleElement {
   /**
    * Creates the HTML element and adds it to the registry 
    */
-  public constructor(element: HTMLElement, attributes: Record<string, any>) {
+  public constructor(element: Element, attributes: Record<string, any>) {
     this._element = element;
     this._attributes = attributes;
-    for (const [ key, value ] of Object.entries(attributes)) {
-      const exists = this._element.getAttribute(key);
-      if (exists && typeof value === 'string' && exists !== value) {
-        this._element.setAttribute(key, value);
-      }
-    }
     //add to registry
     TempleElement.registry.set(this._element, this);
   }
@@ -137,14 +118,24 @@ export default class TempleElement {
    * Removes the attribute
    */
   public removeAttribute(key: string) {
+    //get the current value
+    const current = this.getAttribute(key);
+    //if the value is undefined
+    if (typeof current === 'undefined') {
+      //no need to remove it
+      return this;
+    }
     delete this._attributes[key];
     this._element.removeAttribute(key);
+    //emit the change event
+    TempleEmitter.emit('attribute-remove', this, key, current);
+    return this;
   }
 
   /**
    * Returns a serialized version of the attributes
    */
-  public serialize(attributes?: Record<string, any>) {
+  public serialize(attributes?: any) {
     if (!attributes) {
       attributes = this._attributes;
     }
@@ -160,10 +151,26 @@ export default class TempleElement {
    * Sets the attribute value
    */
   public setAttribute(key: string, value: any) {
+    //get the current value
+    const current = this.getAttribute(key);
+    //if the value is the same
+    if (current === value) {
+      //no need to set it
+      return this;
+    }
+    //set the new value
     this._attributes[key] = value;
-    if (typeof value === 'string') {
+    if (typeof value === 'string' && key !== 'children') {
       this._element.setAttribute(key, value);
     }
+    //emit the change event
+    if (typeof current === 'undefined') {
+      TempleEmitter.emit('attribute-create', this, key, value);
+    } else {
+      TempleEmitter.emit('attribute-update', this, key, value, current);
+    }
+    
+    return this;
   }
 
   /**
@@ -172,12 +179,8 @@ export default class TempleElement {
   public setAttributes(attributes: Record<string, any>) {
     //loop through all the attributes
     for (const [ key, value ] of Object.entries(attributes)) {
-      //get the current attribute value
-      const current = this.getAttribute(key);
-      //if the value is different, set it
-      if (current !== value) {
-        this.setAttribute(key, value);
-      }
+      //and just set it
+      this.setAttribute(key, value);
     }
     //get all the names so we know which ones to remove
     const names = Object.keys(attributes);
@@ -188,5 +191,7 @@ export default class TempleElement {
         this.removeAttribute(key);
       }
     }
+
+    return this;
   }
 }

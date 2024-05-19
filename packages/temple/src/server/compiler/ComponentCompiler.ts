@@ -223,8 +223,7 @@ export default class ComponentCompiler {
     //public template()
     component.addMethod({
       name: 'template',
-      returnType: 'HTMLElement[]',
-      statements: `${scripts.join('\n')}\nreturn ${markup.trim()};`
+      statements: `${scripts.join('\n')}\nreturn () => ${markup.trim()};`
     });
 
     //customElements.define('foo-bar', 'FoobarComponent');

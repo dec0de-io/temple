@@ -217,7 +217,7 @@ export default class DocumentCompiler {
     const source = project.createSourceFile('page.ts');
     //import '@dec0de-io/temple/dist/TempleAttribute'
     source.addImportDeclaration({
-      moduleSpecifier: '@dec0de-io/temple/dist/TempleAttribute'
+      moduleSpecifier: '@dec0de-io/temple/dist/TempleHelpers'
     });
     components.forEach(component => {
       //import './components/Counter'

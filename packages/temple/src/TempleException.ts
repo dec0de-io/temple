@@ -1,27 +1,15 @@
+import type { ErrorList } from './types/Exception';
+import Exception from './types/Exception';
+
 /**
  * Exceptions are used to give more information
  * of an error that has occured
  */
-export default class TempleException extends Error {
-  /**
-   * Error code
-   */
-  public code: number;
-
-  /**
-   * Starting index
-   */
-  public start = 0;
-
-  /**
-   * ending index
-   */
-  public end = 0;
-
+export default class TempleException extends Exception {
   /**
    * General use expressive reasons
    */
-  static for(message: string, ...values: string[]): TempleException {
+  static for(message: string, ...values: string[]) {
     values.forEach(function(value) {
       message = message.replace('%s', value);
     });
@@ -30,40 +18,28 @@ export default class TempleException extends Error {
   }
 
   /**
-   * An exception should provide a message and a name
+   * Expressive error report
    */
-  constructor(message: string, code = 500) {
-    super();
-    this.message = message;
-    this.name = this.constructor.name;
-    this.code = code;
+  static forErrorsFound(errors: ErrorList): Exception {
+    const exception = new this('Invalid Parameters');
+    exception.errors = errors;
+    return exception;
   }
 
   /**
-   * Expressive way to set an error code
+   * Requires that the condition is true
    */
-  withCode(code: number) {
-    this.code = code;
-    return this;
-  }
+  static require(
+    condition: boolean, 
+    message: string, 
+    ...values: any[]
+  ): void {
+    if (!condition) {
+      for (const value of values) {
+        message = message.replace('%s', value);
+      } 
 
-  /**
-   * Expressive way to set syntax position
-   */
-  withPosition(start: number, end: number) {
-    this.start = start;
-    this.end = end;
-    return this;
-  }
-
-  /**
-   * Converts error to JSON
-   */
-  toJSON(): Record<string, any> {
-    return {
-      error: true,
-      code: this.code,
-      message: this.message
-    };
+      throw new this(message);
+    }
   }
 }
